@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import oncourse.model.Course;
 import oncourse.model.GradeRecord;
 import oncourse.model.User;
 import oncourse.model.dao.GradeRecordDao;
@@ -31,6 +32,16 @@ public class GradeRecordDaoImpl implements GradeRecordDao {
 
         return entityManager.createQuery( query, GradeRecord.class )
             .setParameter( "student", student )
+            .getResultList();
+    }
+    
+    @Override
+    public List<GradeRecord> getCourseGradeRecords( Course course )
+    {
+        String query = "from GradeRecord where course = :course order by term";
+
+        return entityManager.createQuery( query, GradeRecord.class )
+            .setParameter( "course", course )
             .getResultList();
     }
 

@@ -2,6 +2,7 @@ package oncourse.model.dao;
 
 import java.util.List;
 
+import oncourse.model.Course;
 import oncourse.model.GradeRecord;
 import oncourse.model.User;
 
@@ -12,5 +13,7 @@ public interface GradeRecordDao {
     List<GradeRecord> getGradeRecords( User student );
 
     GradeRecord saveGradeRecord( GradeRecord gradeRecord );
+    
+    List<GradeRecord> getCourseGradeRecords( Course course );
 
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,9 +34,16 @@ public class ProgramDaoImpl implements ProgramDao {
 
     @Override
     @Transactional
+    @PreAuthorize ("hasRole('ROLE_ADMIN')")
     public Program saveProgram( Program program )
     {
         return entityManager.merge( program );
+    }
+    
+    @Override
+    @Transactional
+    public void deleteProgram( Program program) {
+    	entityManager.remove(program);
     }
 
 }

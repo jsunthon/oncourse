@@ -11,5 +11,7 @@ public interface ProgramDao {
     List<Program> getPrograms();
 
     Program saveProgram( Program program );
+    
+    void deleteProgram( Program program );
 
 }

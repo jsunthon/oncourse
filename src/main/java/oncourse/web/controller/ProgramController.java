@@ -15,8 +15,11 @@ import org.springframework.web.bind.support.SessionStatus;
 
 import oncourse.model.Department;
 import oncourse.model.Program;
+import oncourse.model.User;
 import oncourse.model.dao.DepartmentDao;
 import oncourse.model.dao.ProgramDao;
+import oncourse.model.dao.UserDao;
+import oncourse.security.SecurityUtils;
 
 @Controller
 @SessionAttributes({ "program" })
@@ -27,6 +30,9 @@ public class ProgramController {
 
 	@Autowired
 	private ProgramDao programDao;
+	
+	@Autowired
+	private UserDao userDao;
 
 	@RequestMapping("/program/list.html")
 	public String list(ModelMap models) {
@@ -85,5 +91,30 @@ public class ProgramController {
 		program.setDepartment(department);
 		programDao.saveProgram(program);
 		return "redirect:list.html";
+	}
+	
+	@RequestMapping(value = "/progress.html", method = RequestMethod.GET)
+	public String progress(ModelMap models) {
+		User user = SecurityUtils.getUser();
+		Program program = programDao.getProgram(user.getProgram().getId());
+		models.put("userProgram", program);
+		return "program/progress";
+	}
+	
+	
+	@RequestMapping(value = "/studentprograms.html", method = RequestMethod.GET)
+	public String studentPrograms(ModelMap models) {
+		List<Program> programs = programDao.getPrograms();
+		models.put("programs", programs);
+		return "program/signup";
+	}
+	
+	@RequestMapping(value = "/signup.html", method = RequestMethod.GET)
+	public String studentPrograms(@RequestParam Long id) {
+		Program program = programDao.getProgram(id);
+		User user = SecurityUtils.getUser();
+		user.setProgram(program);
+		userDao.saveUser(user);
+		return "redirect:progress.html";
 	}
 }

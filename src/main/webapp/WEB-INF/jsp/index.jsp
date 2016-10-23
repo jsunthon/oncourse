@@ -19,6 +19,9 @@
       <a href="program/list.html">Programs</a> |
     </security:authorize>
     <a href="grade/list.html">Grades</a> |
+    <a href="progress.html">Student Progress</a> |
+    <a href="studentprograms.html">Program signup / change</a> |
+    <a href="studentcourses.html">Course signup / change</a> |
     <a href="<c:url value='/logout' />">Logout</a>
   </security:authorize>
 </p>

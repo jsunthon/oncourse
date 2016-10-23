@@ -6,6 +6,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import oncourse.model.GradeRecord;
 import oncourse.model.User;
@@ -34,6 +35,7 @@ public class GradeRecordDaoImpl implements GradeRecordDao {
     }
 
     @Override
+    @Transactional
     public GradeRecord saveGradeRecord( GradeRecord gradeRecord )
     {
         return entityManager.merge( gradeRecord );

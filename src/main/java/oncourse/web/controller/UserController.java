@@ -50,10 +50,34 @@ public class UserController {
     public String list( @RequestParam Long id, ModelMap models )
     {
         User user = userDao.getUser(id);
+        List<GradeRecord> gradeRecords = gradeRecordDao.getGradeRecords(user);
+        models.put("gradeRecords", gradeRecords);
         models.put("user", user);
-        return "user/view";
+        return "grade/list";
+    }
+    
+    
+    @RequestMapping(value = "/user/editGradeRecord.html", method = RequestMethod.GET)
+    public String editGR( @RequestParam Long id, ModelMap models )
+    {
+    	GradeRecord gradeRecord = gradeRecordDao.getGradeRecord(id);
+    	List<Grade> grades = gradeDao.getGrades();
+        models.put("gradeRecord", gradeRecord);
+        models.put("grades", grades);
+        return "user/edit-grade";
+    }
+    
+    @RequestMapping(value = "/user/editGradeRecord.html", method = RequestMethod.POST)
+    public String editGR( @RequestParam Long gradeRecordId, @RequestParam Long gradeId)
+    {	
+    	Grade grade = gradeDao.getGrade(gradeId);
+    	GradeRecord gradeRecord = gradeRecordDao.getGradeRecord(gradeRecordId);
+    	gradeRecord.setGrade(grade);
+    	gradeRecord = gradeRecordDao.saveGradeRecord(gradeRecord);
+    	return "redirect:grades.html?id=" + gradeRecord.getStudent().getId();
     }
 	
+    //	<a href="editGrade.html?id=${gradeRecord.id }">Edit Grade</a>
 	
 	@RequestMapping(value = "/user/progress.html", method = RequestMethod.GET)
 	public String progress(@RequestParam Long id, ModelMap models) {

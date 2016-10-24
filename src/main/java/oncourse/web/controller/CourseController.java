@@ -89,7 +89,7 @@ public class CourseController {
         Term term = new Term();
         gradeRecord.setTerm(term);
         gradeRecordDao.saveGradeRecord(gradeRecord);
-        return "index.html";
+        return "redirect:index.html";
     }
 
 }

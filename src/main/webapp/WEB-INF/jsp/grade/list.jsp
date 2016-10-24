@@ -14,7 +14,7 @@
 <c:forEach items="${gradeRecords}" var="gradeRecord">
 <tr>
   <td>${gradeRecord.term.fullName}</td>
-  <td>${gradeRecord.course.code}</td>
+  <td>${gradeRecord.course.code} - ${gradeRecord.course.name }</td>
   <td style="text-align: center">${gradeRecord.grade.symbol}</td>
 </tr>
 </c:forEach>

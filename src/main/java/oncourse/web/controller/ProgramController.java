@@ -1,5 +1,6 @@
 package oncourse.web.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -13,10 +14,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 
+import oncourse.model.Course;
 import oncourse.model.Department;
+import oncourse.model.GradeRecord;
 import oncourse.model.Program;
+import oncourse.model.ProgramBlock;
 import oncourse.model.User;
 import oncourse.model.dao.DepartmentDao;
+import oncourse.model.dao.GradeRecordDao;
 import oncourse.model.dao.ProgramDao;
 import oncourse.model.dao.UserDao;
 import oncourse.security.SecurityUtils;
@@ -30,7 +35,10 @@ public class ProgramController {
 
 	@Autowired
 	private ProgramDao programDao;
-	
+
+	@Autowired
+	private GradeRecordDao gradeRecordDao;
+
 	@Autowired
 	private UserDao userDao;
 
@@ -39,7 +47,7 @@ public class ProgramController {
 		models.put("programs", programDao.getPrograms());
 		return "program/list";
 	}
-	
+
 	@RequestMapping("/program/view.html")
 	public String view(@RequestParam Long id, ModelMap models) {
 		models.put("program", programDao.getProgram(id));
@@ -92,23 +100,45 @@ public class ProgramController {
 		programDao.saveProgram(program);
 		return "redirect:list.html";
 	}
-	
+
 	@RequestMapping(value = "/progress.html", method = RequestMethod.GET)
 	public String progress(ModelMap models) {
 		User user = SecurityUtils.getUser();
+		List<Course> offTrackCourses = new ArrayList<>();
+
+		List<GradeRecord> gradeRecords = gradeRecordDao.getGradeRecords(user);
+
 		Program program = programDao.getProgram(user.getProgram().getId());
+		List<ProgramBlock> programBlocks = program.getBlocks();
+				
+		for (GradeRecord gradeRecord : gradeRecords) {
+			//For the gradeRecord, assume it's course contributes to program, unless otherwise found, as follows.
+			boolean goodCourse = false;
+			Course gradeRecordCourse = gradeRecord.getCourse();
+			for (ProgramBlock programBlock : programBlocks) {
+				List<Course> courses = programBlock.getCourses();
+				if (courses.contains(gradeRecordCourse)) {
+					goodCourse = true;
+				}
+			}
+			if (!goodCourse) {
+				/* If goodCourse is still false, it means it didn't belong to a program block.
+				 * Therefore, add it to the list of offTrackCourses*/
+				offTrackCourses.add(gradeRecordCourse);
+			}
+		}
+		models.put("offTrackCourses", offTrackCourses);
 		models.put("userProgram", program);
 		return "program/progress";
 	}
-	
-	
+
 	@RequestMapping(value = "/studentprograms.html", method = RequestMethod.GET)
 	public String studentPrograms(ModelMap models) {
 		List<Program> programs = programDao.getPrograms();
 		models.put("programs", programs);
 		return "program/signup";
 	}
-	
+
 	@RequestMapping(value = "/signup.html", method = RequestMethod.GET)
 	public String studentPrograms(@RequestParam Long id) {
 		Program program = programDao.getProgram(id);

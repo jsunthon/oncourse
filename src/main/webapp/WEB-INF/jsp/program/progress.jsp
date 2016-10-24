@@ -15,7 +15,7 @@
 	</h2>
 	<h1>Progress:
 		<c:choose>
-		<c:when test="${fn:length(offTrackCourses) gt 0}">YOU ARE OFF COURSE!</c:when>
+		<c:when test="${fn:length(offTrackGradeRecords) gt 0}">YOU ARE OFF COURSE!</c:when>
 		<c:otherwise>You're on course.</c:otherwise>
 		</c:choose>
 	</h1>
@@ -25,9 +25,17 @@
 
 	<hr />
 
-	<h3>Courses off track (${fn:length(offTrackCourses)})</h3>
-	<c:forEach items="${offTrackCourses }" var="offTrackCourse">
-		<p>${offTrackCourse.name }</p>
+	<h3>Courses off track (${fn:length(offTrackGradeRecords)})</h3>
+	<i>Note: These are courses that either:<br/>
+	1) Count towards the program but you are receiving a failing grade.<br/>
+	2) Doesn't count towards the program at all.
+	</i>
+	<c:forEach items="${offTrackGradeRecords }" var="offTrackGradeRecord">
+		<p>Term: ${offTrackGradeRecord.term.fullName }
+		<p>Course Name: ${offTrackGradeRecord.course.name }</p>
+		<p>Grade: ${offTrackGradeRecord.grade.symbol }</p>
+		<p>Units ${offTrackGradeRecord.course.units }</p>
+		----------------------------------------------------------
 	</c:forEach>
 	
 	<hr />

@@ -16,11 +16,13 @@ import org.springframework.web.bind.support.SessionStatus;
 
 import oncourse.model.Course;
 import oncourse.model.Department;
+import oncourse.model.Grade;
 import oncourse.model.GradeRecord;
 import oncourse.model.Program;
 import oncourse.model.ProgramBlock;
 import oncourse.model.User;
 import oncourse.model.dao.DepartmentDao;
+import oncourse.model.dao.GradeDao;
 import oncourse.model.dao.GradeRecordDao;
 import oncourse.model.dao.ProgramDao;
 import oncourse.model.dao.UserDao;
@@ -41,6 +43,9 @@ public class ProgramController {
 
 	@Autowired
 	private UserDao userDao;
+
+	@Autowired
+	private GradeDao gradeDao;
 
 	@RequestMapping("/program/list.html")
 	public String list(ModelMap models) {
@@ -103,31 +108,53 @@ public class ProgramController {
 
 	@RequestMapping(value = "/progress.html", method = RequestMethod.GET)
 	public String progress(ModelMap models) {
+
 		User user = SecurityUtils.getUser();
-		List<Course> offTrackCourses = new ArrayList<>();
-
-		List<GradeRecord> gradeRecords = gradeRecordDao.getGradeRecords(user);
-
 		Program program = programDao.getProgram(user.getProgram().getId());
+
+		List<GradeRecord> offTrackGradeRecords = new ArrayList<>();
+		List<GradeRecord> gradeRecords = gradeRecordDao.getGradeRecords(user);
 		List<ProgramBlock> programBlocks = program.getBlocks();
-				
+		List<Grade> grades = gradeDao.getGrades();
+
+		Grade baseLineGrade = null; // C- is the baseline grade.
+		for (Grade grade : grades) {
+			if (grade.getSymbol().equals("C-")) {
+				baseLineGrade = grade;
+				break;
+			}
+		}
+
 		for (GradeRecord gradeRecord : gradeRecords) {
-			//For the gradeRecord, assume it's course contributes to program, unless otherwise found, as follows.
+			// For the gradeRecord, assume it's course contributes to program
+			// and that it is not a failing course
 			boolean goodCourse = false;
 			Course gradeRecordCourse = gradeRecord.getCourse();
 			for (ProgramBlock programBlock : programBlocks) {
+				
 				List<Course> courses = programBlock.getCourses();
+
 				if (courses.contains(gradeRecordCourse)) {
-					goodCourse = true;
+					Grade grade = gradeRecord.getGrade();
+					if (grade == null) {
+						goodCourse = true; // person hasn't received grade yet.
+											// give him benefit of the doubt.
+					} else if (grade.getValue() >= baseLineGrade.getValue()) {
+						goodCourse = true;
+					}
 				}
 			}
+
 			if (!goodCourse) {
-				/* If goodCourse is still false, it means it didn't belong to a program block.
-				 * Therefore, add it to the list of offTrackCourses*/
-				offTrackCourses.add(gradeRecordCourse);
+				/*
+				 * If goodCourse is still false, it means it didn't belong to a
+				 * program block or it did but it was a failing class.
+				 * Therefore, add it to the list of offTrackCourses
+				 */
+				offTrackGradeRecords.add(gradeRecord);
 			}
 		}
-		models.put("offTrackCourses", offTrackCourses);
+		models.put("offTrackGradeRecords", offTrackGradeRecords);
 		models.put("userProgram", program);
 		return "program/progress";
 	}

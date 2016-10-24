@@ -50,6 +50,7 @@
         <security:intercept-url pattern="/course/**" access="hasAnyRole('ADMIN','ADVISOR')" />
         <security:intercept-url pattern="/department/**" access="hasAnyRole('ADMIN','ADVISOR')" />
         <security:intercept-url pattern="/program/**" access="hasAnyRole('ADMIN','ADVISOR')" />
+        <security:intercept-url pattern="/user/**" access="hasAnyRole('ADMIN','ADVISOR')" />
         <security:intercept-url pattern="/grade/**" access="authenticated" />
     </security:http>
 

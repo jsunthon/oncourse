@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,5 +56,13 @@ public class UserDaoImpl implements UserDao {
     {
         return entityManager.merge( user );
     }
-
+    
+    @Override
+    @PreAuthorize ("hasAnyRole('ROLE_ADMIN', 'ROLE_ADVISOR')")
+    public List<User> getUsers() {
+    	String query = "from User";
+    	return entityManager
+    			.createQuery(query, User.class)
+    			.getResultList();
+    }
 }

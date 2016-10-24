@@ -1,5 +1,7 @@
 package oncourse.model.dao;
 
+import java.util.List;
+
 import oncourse.model.User;
 
 public interface UserDao {
@@ -11,5 +13,6 @@ public interface UserDao {
     User getUserByUsername( String username );
 
     User saveUser( User user );
-
+    
+    List<User> getUsers();
 }

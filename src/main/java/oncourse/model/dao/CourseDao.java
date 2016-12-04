@@ -11,5 +11,7 @@ public interface CourseDao {
     List<Course> getCourses();
 
     Course saveCourse( Course course );
+    
+    List<String> suggestCourses(String term);
 
 }

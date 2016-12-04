@@ -18,6 +18,7 @@
       <a href="department/list">Departments</a> |
       <a href="program/list">Programs</a> |
     </security:authorize>
+    <a href="signup">Course Signup</a>
     <a href="grade/list">Grades</a> |
     <a href="<c:url value='/logout' />">Logout</a>
   </security:authorize>

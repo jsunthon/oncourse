@@ -12,5 +12,7 @@ public interface GradeRecordDao {
     List<GradeRecord> getGradeRecords( User student );
 
     GradeRecord saveGradeRecord( GradeRecord gradeRecord );
+    
+    void deleteGradeRecord(GradeRecord gradeRecord);
 
 }

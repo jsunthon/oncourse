@@ -40,5 +40,10 @@ public class GradeRecordDaoImpl implements GradeRecordDao {
     {
         return entityManager.merge( gradeRecord );
     }
-
+    
+    @Override
+    @Transactional
+    public void deleteGradeRecord(GradeRecord gradeRecord) {
+    	entityManager.remove(gradeRecord);
+    }
 }

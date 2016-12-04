@@ -1,4 +1,0 @@
-## Database information
-db.url=jdbc:postgresql://localhost:5432/oncourse
-db.username=cysun
-db.password=abcd

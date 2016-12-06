@@ -37,5 +37,11 @@ public class DepartmentDaoImpl implements DepartmentDao {
     {
         return entityManager.merge( department );
     }
+    
+    @Override
+    @Transactional
+    public void deleteDepartment(Department department) {
+    	entityManager.remove(department);
+    }
 
 }

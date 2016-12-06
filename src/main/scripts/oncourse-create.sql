@@ -19,7 +19,8 @@ create table courses (
 
 create table departments (
     id      bigint primary key,
-    name    varchar(255)
+    name    varchar(255),
+    deleted boolean not null default 'f'
 );
 
 create table programs (

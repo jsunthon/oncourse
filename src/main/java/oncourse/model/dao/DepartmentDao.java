@@ -11,5 +11,7 @@ public interface DepartmentDao {
     List<Department> getDepartments();
 
     Department saveDepartment( Department department );
+    
+    void deleteDepartment(Department department);
 
 }
